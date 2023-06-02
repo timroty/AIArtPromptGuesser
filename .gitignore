@@ -1,0 +1,5 @@
+.env
+__pycache__/
+Frontend/.next/
+Frontend/package-lock.json
+Frontend/node_modules/
