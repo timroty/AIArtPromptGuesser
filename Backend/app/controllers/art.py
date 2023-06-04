@@ -12,6 +12,14 @@ class Art:
 
         return art
     
+    def get_art_piece_by_id(self, art_id: int):
+        response = self.supabase.client.table("Art").select("*").eq('id', art_id).execute() 
+        if len(response.data) == 0:
+            return None
+        art: ArtModel = ArtModel.from_json(response.data[0])
+
+        return art
+    
     def guess_art_prompt(self, art_id: int, guess: str):
         guess = guess.strip().lower()
         response = self.supabase.client.table("Art").select("*").eq('id', art_id).single().execute()
