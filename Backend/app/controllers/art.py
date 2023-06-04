@@ -1,21 +1,22 @@
 from ..supabase import Supabase
-from ..models.db_models.art import Art
+from ..models.db_models.art import Art as ArtModel
 from thefuzz import fuzz
 
-class ArtHandler:
+class Art:
     def __init__(self):
         self.supabase = Supabase()
 
     def get_random_art_piece(self):
         response = self.supabase.client.from_("random_art_piece").select('*').limit(1).single().execute()
-        art = Art.from_json(response.data)
+        art: ArtModel = ArtModel.from_json(response.data)
 
         return art
     
     def guess_art_prompt(self, art_id: int, guess: str):
-        guess = guess.strip()
+        guess = guess.strip().lower()
         response = self.supabase.client.table("Art").select("*").eq('id', art_id).single().execute()
-        art: Art = Art.from_json(response.data)
+        art: ArtModel = ArtModel.from_json(response.data)
+        art.prompt = art.prompt.lower()
         ratio_result: int = fuzz.ratio(guess, art.prompt)
         partial_ratio_result: int = fuzz.partial_ratio(guess, art.prompt)
         token_sort_ratio: int = fuzz.token_sort_ratio(guess, art.prompt)
